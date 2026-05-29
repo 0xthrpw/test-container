@@ -84,6 +84,11 @@ const server = http.createServer((req, res) => {
   res.end(renderHtml());
 });
 
-server.listen(port, '0.0.0.0', () => {
+// Omit the host arg so Node binds the unspecified IPv6 address (::) with a
+// dual-stack socket — it accepts both IPv6 (::1) and IPv4 (127.0.0.1), so
+// `wget localhost:PORT` works inside `docker exec` regardless of which
+// loopback the resolver picks. Traefik (which dials the container by its
+// IPv4 network address) is unaffected either way.
+server.listen(port, () => {
   console.log(`env-echo listening on :${port} (host ${os.hostname()})`);
 });
